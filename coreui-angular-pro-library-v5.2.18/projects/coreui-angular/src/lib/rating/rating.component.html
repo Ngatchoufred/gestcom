@@ -1,0 +1,63 @@
+@for (item of ratingItems(); track item; let itemIndex = $index, last = $last) {
+  @if (tooltips()) {
+    <div
+      class="rating-item"
+      [cTooltip]="getTooltipValue(itemIndex)"
+      [cTooltipTrigger]="['hover', 'focusin']"
+      (mouseenter)="hoveredItem.set(itemIndex)"
+      (focusin)="hoveredItem.set(itemIndex)"
+    >
+      <ng-container *ngTemplateOutlet="ratingItemLabel; context: { $implicit: item, itemIndex }" />
+    </div>
+  } @else {
+    <div class="rating-item">
+      <ng-container *ngTemplateOutlet="ratingItemLabel; context: { $implicit: item, itemIndex }" />
+    </div>
+  }
+}
+
+<ng-template let-item let-itemIndex="itemIndex" #ratingItemLabel>
+  @for (itemValue of item; track radioIndex; let radioIndex = $index, last = $last) {
+    <c-rating-item-label
+      class="rating-item-label d-inline-block"
+      role="radio"
+      (click)="handleClick(itemValue)"
+      (focus)="handleFocusIn($event, itemValue)"
+      [ngClass]="{ active: isItemActive(itemValue) }"
+      (mouseenter)="handleMouseEnter($event, itemValue)"
+      [ngStyle]="radioIndex + 1 < numberOfSubItems() ? notLastItemStyle(radioIndex) : {}"
+      [value]="itemValue"
+      [attr.aria-label]="itemValue"
+      [attr.aria-checked]="itemValue === value()"
+    >
+      @if (iconTemplates()[icon()[itemIndex] ?? icon()]) {
+        <ng-container *ngTemplateOutlet="customIconTemplate; context: { $implicit: icon()?.[itemIndex] ?? icon() }" />
+      } @else {
+        <ng-container *ngTemplateOutlet="defaultIconTemplate" />
+      }
+      @if (iconTemplates()[activeIcon()[itemIndex] ?? activeIcon()]) {
+        <ng-container *ngTemplateOutlet="customIconActiveTemplate; context: { $implicit: activeIcon()?.[itemIndex] ?? activeIcon() }" />
+      }
+    </c-rating-item-label>
+  }
+</ng-template>
+
+<ng-template #tooltipContent>
+  <span>{{ hoverValue() }}</span>
+</ng-template>
+
+<ng-template #defaultIconTemplate>
+  <div class="rating-item-icon"></div>
+</ng-template>
+
+<ng-template #customIconTemplate let-icon>
+  <div class="rating-item-custom-icon">
+    <ng-container *ngTemplateOutlet="iconTemplates()?.[icon] || defaultIconTemplate" />
+  </div>
+</ng-template>
+
+<ng-template #customIconActiveTemplate let-icon>
+  <div class="rating-item-custom-icon-active">
+    <ng-container *ngTemplateOutlet="iconTemplates()?.[icon] || customIconTemplate" />
+  </div>
+</ng-template>

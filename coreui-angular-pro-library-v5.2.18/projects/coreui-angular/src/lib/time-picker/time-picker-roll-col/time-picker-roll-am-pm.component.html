@@ -1,0 +1,12 @@
+@for (element of elements; track element; let i = $index) {
+  <div (click)="handleElementClick($event, element)"
+       (keydown)="handleElementKeyDown($event, element)"
+       [attr.disabled]="element.disabled || null"
+       [cDayPeriodElement]="element"
+       [ngClass]="{'time-picker-roll-cell': true, selected: element.value === selected, disabled: element.disabled}"
+       [tabindex]="element.disabled ? -1 : 0"
+       role="button"
+  >
+    {{ element.label }}
+  </div>
+}

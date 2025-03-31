@@ -1,0 +1,57 @@
+{
+  "name": "@coreui/angular-chartjs",
+  "version": "5.2.18",
+  "description": "Angular wrapper component for Chart.js",
+  "copyright": "Copyright 2024 creativeLabs Łukasz Holeczek",
+  "license": "MIT",
+  "homepage": "https://coreui.io/angular",
+  "author": {
+    "name": "CoreUI",
+    "url": "https://coreui.io",
+    "github": "https://github.com/coreui",
+    "twitter": "https://twitter.com/core_ui"
+  },
+  "contributors": [
+    {
+      "name": "CoreUI Team",
+      "url": "https://github.com/orgs/coreui/people"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreui/coreui-angular.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coreui/coreui-angular/issues"
+  },
+  "peerDependencies": {
+    "@angular/core": "^18.2.0",
+    "@coreui/chartjs": "^4.0.0",
+    "chart.js": "^4.4.4"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "coreui",
+    "coreui-chartjs",
+    "coreui-angular",
+    "component",
+    "chartjs",
+    "angular"
+  ],
+  "devDependencies": {
+    "copyfiles": "file:../../node_modules/copyfiles",
+    "typescript": "file:../../node_modules/typescript"
+  },
+  "schematics": "./schematics/collection.json",
+  "scripts": {
+    "build": "tsc -p tsconfig.schematics.json",
+    "postbuild": "copyfiles schematics/*/files/** schematics/collection.json ../../dist/coreui-angular-chartjs/"
+  },
+  "ng-add": {
+    "save": true
+  }
+}

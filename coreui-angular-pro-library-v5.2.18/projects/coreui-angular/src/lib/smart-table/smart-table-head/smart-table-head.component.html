@@ -1,0 +1,167 @@
+@if (component === 'tfoot') {
+  <ng-container *ngTemplateOutlet="summaryRowTemplate" />
+}
+@if (showGroups) {
+  @for (row of columnGroups$(); track row; let i = $index) {
+    <tr>
+      @if (selectable) {
+        <th></th>
+      }
+      @for (cell of row; track cell; let i = $index) {
+        <th [cHtmlAttr]="getTableHeaderCellProps(cell)"
+            [cTableColor]="tableHeaderCellColor(cell)"
+            [colSpan]="cell.colspan ?? 1"
+            [ngStyle]="getTableHeaderCellStyles(cell, columnSorter)"
+        >
+          {{ cell.label }}
+        </th>
+      }
+    </tr>
+  }
+}
+
+<tr>
+  @if (selectable) {
+    <th>
+      <input
+        (change)="handleSelectAllChecked($event)"
+        [checked]="selectedAll === true"
+        [disabled]="!selectAll"
+        [indeterminate]="indeterminate$ | async"
+        autocomplete="off"
+        cFormCheckInput
+        type="checkbox"
+      >
+    </th>
+  }
+  @for (column of columns; track column; let i = $index) {
+    <th
+      (click)="handleSortClick(column, i)"
+      (keydown)="handleSortKeyDown($event, column, i)"
+      [attr.aria-sort]="getAriaSort(column)"
+      [cHtmlAttr]="getTableHeaderCellProps(column)"
+      [cTableColor]="tableHeaderCellColor(column)"
+      [ngClass]="getTableHeaderCellClass(column)"
+      [ngStyle]="getTableHeaderCellStyles(column, columnSorter)"
+      [tabindex]="columnSorter && columnSorterEnabled(column) ? 0 : -1"
+    >
+      @if (columnSorter && columnSorterEnabled(column)) {
+        <ng-container
+          *ngTemplateOutlet="columnSorterIconTemplate; context: { $implicit: getColumnSorterState(column) }"
+        />
+      }
+      <ng-container
+        *ngTemplateOutlet="columnLabelTemplates[getColumnLabel(column)] ?? defaultColumnLabel; context: {$implicit: column, header: this}"
+      />
+    </th>
+  }
+</tr>
+@if (columnFilter) {
+  <tr>
+    @if (selectable) {
+      <th></th>
+    }
+    @for (column of columns; track column; let i = $index) {
+      <th [cHtmlAttr]="getTableHeaderCellProps(column)"
+          [cTableColor]="tableHeaderCellColor(column)"
+          [ngStyle]="getTableHeaderCellStyles(column, columnSorter)"
+      >
+        <ng-container
+          *ngTemplateOutlet="columnFilterTemplates[getColumnFilter(column)] ?? defaultColumnFilter; context: {$implicit: column, header: this}"
+        />
+      </th>
+    }
+  </tr>
+}
+
+<ng-template #defaultColumnLabel let-column>
+  <div class="d-inline">{{ column | columnLabel }}</div>
+</ng-template>
+
+<ng-template #defaultColumnFilter let-column>
+  @if (columnFilterEnabled(column)) {
+    <c-smart-table-column-filter
+      (valueChange)="handleColumnFilterValueChange($event)"
+      [column]="column"
+      [delay]="300"
+      [onEvent]="columnFilterEvent"
+      [value]="columnFilterState[columnKey(column)] ?? ''"
+      cFilterInput
+      sizing="sm"
+    />
+  }
+</ng-template>
+
+<ng-template #columnSorterIconTemplate let-columnSorterState>
+  @switch (columnSorterState) {
+    @case ('asc') {
+      <span class="float-end mx-1">
+        <ng-container *ngTemplateOutlet="sortingIconAscendingTemplate" />
+      </span>
+    }
+    @case ('desc') {
+      <span class="float-end mx-1">
+        <ng-container *ngTemplateOutlet="sortingIconDescendingTemplate" />
+      </span>
+    }
+    @default {
+      <span class="opacity-25 float-end mx-1">
+        <ng-container *ngTemplateOutlet="sortingIconTemplate" />
+      </span>
+    }
+  }
+</ng-template>
+
+<!--todo: sortingIconCustom Templates-->
+<ng-template #sortingIconTemplate>
+  <svg
+    class="icon icon-custom-size"
+    role="img"
+    viewBox="0 0 512 512"
+    width="18"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="384 433.373 384 160 352 160 352 434.51 282.177 364.687 259.55 387.313 367.432 495.196 475.313 387.313 452.687 364.687 384 433.373"
+    ></polygon>
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="159.432 17.372 51.55 125.255 74.177 147.882 144 78.059 144 352 176 352 176 79.195 244.687 147.882 267.313 125.255 159.432 17.372"
+    ></polygon>
+  </svg>
+</ng-template>
+
+<ng-template #sortingIconAscendingTemplate>
+  <svg
+    class="icon icon-custom-size"
+    role="img"
+    viewBox="0 0 512 512"
+    width="18"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="390.624 150.625 256 16 121.376 150.625 144.004 173.252 240.001 77.254 240.001 495.236 272.001 495.236 272.001 77.257 367.996 173.252 390.624 150.625"
+    ></polygon>
+  </svg>
+</ng-template>
+
+<ng-template #sortingIconDescendingTemplate>
+  <svg
+    class="icon icon-custom-size"
+    role="img"
+    viewBox="0 0 512 512"
+    width="18"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="367.997 338.75 271.999 434.747 271.999 17.503 239.999 17.503 239.999 434.745 144.003 338.75 121.376 361.377 256 496 390.624 361.377 367.997 338.75"
+    ></polygon>
+  </svg>
+</ng-template>

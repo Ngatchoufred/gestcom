@@ -1,0 +1,113 @@
+@if (variant === 'select') {
+  <div class="date-picker-timepickers">
+    <div class="picker time-picker">
+      <div [formGroup]="selectTime" [ngClass]="timePickerClasses" class="time-picker-body">
+        <span class="time-picker-inline-icon"></span>
+        <select (blur)="onBlur()" [attr.disabled]="disabled || null" [sizing]="size ?? ''"
+                cSelect class="time-picker-inline-select ms-0" formControlName="selectHours">
+          @for (hour of listOfHours12; track hour; let i = $index) {
+            <option [attr.disabled]="hour.disabled || null" [ngValue]="hour.value">
+              {{ hour.label }}
+            </option>
+          }
+        </select>
+        {{ ' :' }}<select (blur)="onBlur()" [attr.disabled]="disabled || null" [sizing]="size ?? ''"
+                          cSelect class="time-picker-inline-select ms-0" formControlName="selectMinutes">
+        @for (minute of listOfMinutes; track minute; let i = $index) {
+          <option [attr.disabled]="minute.disabled || null" [ngValue]="minute.value">
+            {{ minute.label }}
+          </option>
+        }
+      </select>
+        @if (seconds) {
+          {{ ' :' }}<select (blur)="onBlur()" [attr.disabled]="disabled || null" [sizing]="size ?? ''"
+                            cSelect class="time-picker-inline-select ms-0" formControlName="selectSeconds">
+            @for (second of listOfSeconds; track second; let i = $index) {
+              <option [attr.disabled]="second.disabled || null" [ngValue]="second.value">
+                {{ second.label }}
+              </option>
+            }
+          </select>
+        }
+        @if (hour12) {
+          <select (blur)="onBlur()" [attr.disabled]="disabled || null" [sizing]="size ?? ''"
+                  cSelect class="time-picker-inline-select ms-0" formControlName="selectDayPeriod">
+            @for (dayPeriod of dayPeriods; track dayPeriod) {
+              <option [ngValue]="dayPeriod.value" class="time-picker-roll-cell">
+                {{ dayPeriod.label }}
+              </option>
+            }
+          </select>
+        }
+      </div>
+    </div>
+  </div>
+}
+@if (variant === 'roll') {
+  <c-dropdown #dropdown="cDropdown" [autoClose]="'outside'" [ngClass]="timePickerClasses" [visible]="visible">
+    <div [caret]="false" cDropdownToggle class="time-picker-input-group">
+      <input (blur)="handleBlur($event);"
+             (change)="handleTimeInputChange($event)"
+             (focus)="handleFocus($event)"
+             [attr.disabled]="disabled ?? dropdown.visible ? '' : null"
+             [attr.pattern]="hour12 ? '(((0[1-9])|(1[0-2])):([0-5])([0-9])\\s(A|P)M)' : '([01]?[0-9]|2[0-3]):[0-5][0-9]'"
+             [attr.tabindex]="disabled ? -1 : 0"
+             [formControl]="timeInput"
+             [placeholder]="placeholder"
+             [readonly]="inputReadOnly ?? null"
+             class="time-picker-input"
+      >
+      @if (indicator) {
+        <div class="time-picker-indicator"></div>
+      }
+      @if (cleaner && time && !disabled) {
+        <div (click)="!disabled && handleClear($event)" class="time-picker-cleaner" role="button"></div>
+      }
+    </div>
+    <div #dropdownMenu="cDropdownMenu" cDropdownMenu class="time-picker-dropdown py-0">
+      <div class="time-picker-body time-picker-roll" style="position: relative;">
+        <c-time-picker-roll-col
+          (selectedChange)="handleSelectTimeChange($event, 'hour')"
+          [disabled]="disabled"
+          [elements]="listOfHours12"
+          [refresh]="dropdownMenu.visible"
+          [selected]="hour"
+          role="listbox"
+        />
+        <c-time-picker-roll-col
+          (selectedChange)="handleSelectTimeChange($event, 'minute')"
+          [disabled]="disabled"
+          [elements]="listOfMinutes"
+          [refresh]="dropdownMenu.visible"
+          [selected]="minute"
+          role="listbox"
+        />
+        @if (seconds) {
+          <c-time-picker-roll-col
+            (selectedChange)="handleSelectTimeChange($event, 'second')"
+            [disabled]="disabled"
+            [elements]="listOfSeconds"
+            [refresh]="dropdownMenu.visible"
+            [selected]="second"
+            role="listbox"
+          />
+        }
+        @if (hour12) {
+          <c-time-picker-roll-am-pm
+            (selectedChange)="handleSelectDayPeriodChange($event)"
+            [disabled]="disabled"
+            [elements]="dayPeriods"
+            [refresh]="dropdownMenu.visible"
+            [selected]="dayPeriod"
+            role="listbox"
+          />
+        }
+      </div>
+      @if (templates?.timePickerFooter) {
+        <div class="time-picker-footer">
+          <ng-container *ngTemplateOutlet="templates?.timePickerFooter; context: {$implicit: dropdown}" />
+        </div>
+      }
+    </div>
+  </c-dropdown>
+}

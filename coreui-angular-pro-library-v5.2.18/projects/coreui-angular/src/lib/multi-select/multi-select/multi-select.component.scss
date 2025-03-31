@@ -1,0 +1,70 @@
+//@forward '@coreui/coreui-pro/scss/coreui';
+
+:host {
+  display: block;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.cdk-focused:not(.disabled) {
+    .form-multi-select {
+      outline: none;
+      box-shadow: 0 0 0 var(--cui-focus-ring-width) var(--cui-focus-ring-color);
+      border-radius: var(--cui-border-radius, 0.375rem);
+
+      //.form-multi-select-search {
+      //  display: flex;
+      //}
+    }
+  }
+
+  &:not(.cdk-focused) {
+    .form-multi-select:not(.show) {
+      input.form-multi-select-search:not([placeholder]) {
+        display: none;
+      }
+    }
+  }
+
+  .form-multi-select {
+
+    .form-multi-select-selection {
+      display: flex;
+      flex: 1 1 auto;
+      flex-wrap: wrap;
+
+      .text-placeholder, .form-multi-select-search::placeholder {
+        color: var(--cui-form-multi-select-color);
+        opacity: .8;
+      }
+
+    }
+
+    // keep it, otherwise lost focus on input after first keyup
+    .form-multi-select-search[size] {
+      display: flex;
+    }
+
+  }
+
+  ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      //todo: @extend .form-multi-select-options;
+      padding: var(--cui-form-multi-select-options-padding-y) var(--cui-form-multi-select-options-padding-x);
+      font-size: 1rem;
+      color: var(--cui-form-multi-select-options-color);
+    }
+  }
+
+  // todo: width
+  .cdk-virtual-scroll-viewport {
+    width: var(--cui-dropdown-min-width);
+  }
+
+  .dropdown-menu {
+    --cui-dropdown-padding-y: 0;
+  }
+}
+
+

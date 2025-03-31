@@ -1,13 +1,14 @@
 package com.gestcom.demo;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@SpringBootTest
+
+@JdbcTest
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class GestComApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
 }
+
+

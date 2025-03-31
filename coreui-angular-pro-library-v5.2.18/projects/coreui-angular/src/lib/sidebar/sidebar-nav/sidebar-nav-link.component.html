@@ -1,0 +1,62 @@
+@switch (linkType) {
+  @case ('disabled') {
+    <a [cHtmlAttr]="item.attributes ?? {}" [ngClass]="item | cSidebarNavLink">
+      <ng-container *ngTemplateOutlet="iconTemplate; context: {$implicit: item}" />
+      <c-sidebar-nav-link-content [item]="item" />
+      @if (item.badge) {
+        <span [ngClass]="item | cSidebarNavBadge">{{ item.badge?.text }}</span>
+      }
+    </a>
+  }
+  @case ('external') {
+    <a (click)="linkClicked()" [cHtmlAttr]="item.attributes ?? {}" [href]="href" [ngClass]="item | cSidebarNavLink">
+      <ng-container *ngTemplateOutlet="iconTemplate; context: {$implicit: item}" />
+      <c-sidebar-nav-link-content [item]="item" />
+      @if (item.badge) {
+        <span [ngClass]="item | cSidebarNavBadge">{{ item.badge?.text }}</span>
+      }
+    </a>
+  }
+  @default {
+    <a (click)="linkClicked()"
+       [cHtmlAttr]="item.attributes ?? {}"
+       [fragment]="item.linkProps?.fragment"
+       [ngClass]="item | cSidebarNavLink"
+       [preserveFragment]="item.linkProps?.preserveFragment ?? false"
+       [queryParamsHandling]="item.linkProps?.queryParamsHandling"
+       [queryParams]="item.linkProps?.queryParams ?? null"
+       [replaceUrl]="item.linkProps?.replaceUrl ?? false"
+       [routerLinkActiveOptions]="item.linkProps?.routerLinkActiveOptions ?? { exact: false }"
+       [routerLink]="item.url"
+       [skipLocationChange]="item.linkProps?.skipLocationChange ?? false"
+       [state]="item.linkProps?.state ?? {}"
+       [target]="item.attributes?.['target']"
+       routerLinkActive="active"
+    >
+      <!--    [class.active]="linkActive"-->
+      <ng-container *ngTemplateOutlet="iconTemplate ; context: {$implicit: item}" />
+      <c-sidebar-nav-link-content [item]="item" />
+      @if (item.badge) {
+        <span [ngClass]="item | cSidebarNavBadge">{{ item.badge?.text }}</span>
+      }
+    </a>
+  }
+}
+<ng-template #iconTemplate let-item>
+  <!--  <i *ngIf="item?.icon" [ngClass]="item | cSidebarNavIcon"></i>-->
+  @if (item?.icon) {
+    <span class="nav-icon">
+      <span [ngClass]="item.icon ?? ''"></span>
+    </span>
+  }
+  @if (item?.iconComponent) {
+    <svg
+      [cIcon]="item.iconComponent?.content"
+      [customClasses]="item | cSidebarNavIcon"
+      [name]="item.iconComponent?.name"
+    ></svg>
+  }
+  @if (!item?.icon && !item?.iconComponent) {
+    <span [ngClass]="item | cSidebarNavIcon"></span>
+  }
+</ng-template>

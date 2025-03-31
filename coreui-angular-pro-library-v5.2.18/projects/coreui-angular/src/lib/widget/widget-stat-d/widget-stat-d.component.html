@@ -1,0 +1,14 @@
+<c-card-header [ngClass]="headerClasses()">
+  <ng-content />
+</c-card-header>
+<c-card-body cRow class="text-center">
+  @for (item of values(); track item; let i = $index) {
+    @if (i % 2 !== 0) {
+      <div class="vr"></div>
+    }
+    <c-col>
+      <div class="fs-5 fw-semibold">{{ item.value }}</div>
+      <div class="text-uppercase text-body-secondary small">{{ item.title }}</div>
+    </c-col>
+  }
+</c-card-body>

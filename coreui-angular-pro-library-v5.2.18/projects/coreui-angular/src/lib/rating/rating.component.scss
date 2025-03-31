@@ -1,0 +1,10 @@
+:host {
+  display: inline-flex;
+
+  :is(&.disabled, &.readonly) {
+    .rating-item-label {
+      cursor: default;
+    }
+  }
+}
+

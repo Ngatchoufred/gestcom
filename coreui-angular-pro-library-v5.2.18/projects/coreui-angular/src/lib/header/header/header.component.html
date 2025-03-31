@@ -1,0 +1,7 @@
+@if (!!container()) {
+  <div [ngClass]="headerClasses()">
+    <ng-content />
+  </div>
+} @else {
+  <ng-content />
+}

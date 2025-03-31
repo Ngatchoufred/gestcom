@@ -1,0 +1,30 @@
+@if (!use && !!code) {
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    [attr.width]="width"
+    [attr.height]="height || width"
+    [attr.viewBox]="viewBox"
+    [innerHtml]="innerHtml()"
+    [ngClass]="computedClasses"
+    [cHtmlAttr]="attributes"
+    aria-hidden="true"
+    pointer-events="none"
+    role="img"
+    #svgElement
+  >
+  </svg>
+} @else if (use) {
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    [attr.width]="width"
+    [attr.height]="height || width"
+    [ngClass]="computedClasses"
+    [cHtmlAttr]="attributes"
+    aria-hidden="true"
+    pointer-events="none"
+    role="img"
+    #svgElement
+  >
+    <use [attr.href]="use"></use>
+  </svg>
+}

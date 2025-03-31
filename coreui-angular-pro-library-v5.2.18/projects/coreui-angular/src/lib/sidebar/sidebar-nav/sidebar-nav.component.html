@@ -1,0 +1,46 @@
+@for (item of navItemsArray; track item) {
+  @switch (helper.itemType(item)) {
+    @case ('group') {
+      <c-sidebar-nav-group
+        #rla="routerLinkActive"
+        [dropdownMode]="dropdownMode"
+        [item]="item"
+        [ngClass]="item | cSidebarNavItemClass"
+        [routerLinkActiveOptions]="{exact: true}"
+        routerLinkActive="show"
+        [compact]="compact"
+      />
+    }
+    @case ('divider') {
+      <c-sidebar-nav-divider
+        [cHtmlAttr]="item.attributes ?? {}"
+        [item]="item"
+        [ngClass]="item | cSidebarNavItemClass"
+      />
+    }
+    @case ('title') {
+      <c-sidebar-nav-title
+        [cHtmlAttr]="item.attributes ?? {}"
+        [item]="item"
+        [ngClass]="item | cSidebarNavItemClass"
+      />
+    }
+    @case ('label') {
+      <c-sidebar-nav-label
+        [item]="item"
+        [ngClass]="item | cSidebarNavItemClass"
+      />
+    }
+    @case ('empty') {
+      <ng-container />
+    }
+    @default {
+      <c-sidebar-nav-link
+        (linkClick)="hideMobile()"
+        [item]="item"
+        [ngClass]="item | cSidebarNavItemClass"
+      />
+    }
+  }
+}
+<ng-content />

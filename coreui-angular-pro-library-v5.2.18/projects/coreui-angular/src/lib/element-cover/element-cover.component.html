@@ -1,0 +1,9 @@
+<div [ngStyle]="{position: 'absolute', 'top.%': '50', 'left.%': '50', transform: 'translateX(-50%) translateY(-50%)'}">
+  @if (hasContent) {
+    <div #content>
+      <ng-content />
+    </div>
+  } @else {
+    <c-spinner color="primary" variant="grow" />
+  }
+</div>

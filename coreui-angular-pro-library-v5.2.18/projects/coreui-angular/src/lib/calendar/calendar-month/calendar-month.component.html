@@ -1,0 +1,115 @@
+<table>
+  @if (view === 'days') {
+    <thead>
+    <tr>
+      @if (showWeekNumber) {
+        <th class="calendar-cell">
+          <div class="calendar-header-cell-inner">{{ weekNumbersLabel }}</div>
+        </th>
+      }
+      @for (weekDay of weekDays; track weekDay.date; let i = $index) {
+        <th class="calendar-cell">
+          <div class="calendar-header-cell-inner">
+            {{ weekDay.date | calendarWeekday:weekdayFormat:locale }}
+          </div>
+        </th>
+      }
+    </tr>
+    </thead>
+  }
+  <tbody (mouseleave)="handleCellMouseLeave()">
+    @switch (view) {
+      @case ('years') {
+        @for (yearsRow of listOfYears(); track yearsRow; let rowIdx = $index) {
+          <tr>
+            @for (year of yearsRow; track year; let idx = $index) {
+              <td
+                #calendarYear="cCalendarDay"
+                (click)="!calendarYear.disabled$() && handleYearCellClick(year)"
+                (keydown)="calendarYear.date && handleDayCellKeyDown($event, calendarYear.date)"
+                (keyup)="handleYearCellKeyUp($event, calendarYear.date)"
+                (mouseenter)="calendarYear.date && handleCellMouseEnter(calendarYear.date)"
+                [attr.aria-label]="calendarYear.date.getFullYear()"
+                [date]="getYearStart(year)"
+                [ngClass]="year | calendarClassYear"
+                [tabindex]="calendarYear.disabled$() ? -1 : 0"
+                cCalendarDay
+              >
+                <div class="calendar-cell-inner">
+                  {{ yearNumber(year) }}
+                </div>
+              </td>
+            }
+          </tr>
+        }
+      }
+      @case ('months') {
+        @for (monthsRow of listOfMonths(); track monthsRow; let rowIdx = $index) {
+          <tr>
+            @for (month of monthsRow; track month; let idx = $index) {
+              <td
+                #calendarMonth="cCalendarDay"
+                (click)="!calendarMonth.disabled$() && handleMonthCellClick(calendarMonth.date)"
+                (keydown)="calendarMonth.date && handleDayCellKeyDown($event, calendarMonth.date)"
+                (keyup)="handleMonthCellKeyUp($event, calendarMonth.date)"
+                (mouseenter)="calendarMonth.date && handleCellMouseEnter(calendarMonth.date)"
+                [attr.aria-label]="calendarMonth.date.getFullYear()+' '+month.month"
+                [date]="getMonthStart(rowIdx*3+idx)"
+                [ngClass]="calendarDate | calendarClassMonth:(rowIdx*3+idx)"
+                [tabindex]="calendarMonth.disabled$() ? -1 : 0"
+                cCalendarDay
+              >
+                <div class="calendar-cell-inner">
+                  {{ month.month }}
+                </div>
+              </td>
+            }
+          </tr>
+        }
+
+      }
+      @default {
+        @for (week of monthDetails; track week; let i = $index) {
+          <tr #calendarRow="cCalendarRow"
+              (click)="selectionType === 'week' && (calendarRow.current) && calendarRow.date && handleDayCellClick(calendarRow.date)"
+              (keydown)="selectionType === 'week' && (calendarRow.current) && calendarRow.date && handleDayCellKeyDown($event, calendarRow.date)"
+              (keyup)="selectionType === 'week' && (calendarRow.current) && calendarRow.date && handleDayCellKeyUp($event, calendarRow.date)"
+              (mouseenter)="selectionType === 'week' && calendarRow.date && handleCellMouseEnter(calendarRow.date)"
+              [cCalendarRow]="week"
+          >
+            @if (showWeekNumber) {
+              <th class="calendar-cell-week-number">
+                {{ week.weekNumber === 0 ? 53 : week.weekNumber }}
+              </th>
+            }
+            @for (dateObj of week.days; track dateObj.date; let idx = $index) {
+              @if (dateObj.month === 'current' || showAdjacentDays) {
+                <td #calendarCell="cCalendarDay"
+                    (click)="selectionType === 'day' && (dateObj.month === 'current' || selectAdjacentDays) && handleDayCellClick(dateObj.date)"
+                    (keydown)="selectionType === 'day' && (dateObj.month === 'current' || selectAdjacentDays) && handleDayCellKeyDown($event, dateObj.date)"
+                    (keyup)="selectionType === 'day' && (dateObj.month === 'current' || selectAdjacentDays) && handleDayCellKeyUp($event, dateObj.date)"
+                    (mouseenter)="selectionType === 'day' && (dateObj.month === 'current' || selectAdjacentDays) && handleCellMouseEnter(dateObj.date)"
+                    [attr.aria-label]="dateObj.date | calendarDayTitle:locale"
+                    [date]="dateObj.date"
+                    [month]="dateObj.month"
+                    [ngClass]="dateObj | calendarClassDay:{minDate, maxDate, disabledDates, dateFilter}"
+                    [tabindex]="selectionType === 'day' && (dateObj.month === 'current' || selectAdjacentDays) && !isDateDisabled(dateObj.date) ? 0 : -1"
+                    cCalendarDay
+                >
+                  <div class="calendar-cell-inner">
+                    {{ dateObj.date | calendarDay:dayFormat:locale }}
+                  </div>
+                </td>
+              } @else {
+                <td class="calendar-cell"></td>
+              }
+            }
+          </tr>
+        }
+
+      }
+    }
+
+  </tbody>
+</table>
+

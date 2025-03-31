@@ -1,0 +1,17 @@
+@for (calendar of calendarsArray; track calendar; let i = $index) {
+  <div [ngClass]="view | calendarClassView">
+    <c-calendar-navigation
+      (navigationClick)="handleNavigationClick($event.direction, $event.years)"
+      [addMonths]="i"
+      [navigation]="navigation"
+    />
+
+    <c-calendar-month
+      [addMonths]="i"
+      [firstDayOfWeek]="firstDayOfWeek"
+      [weekdayFormat]="weekdayFormat"
+      cdkMonitorSubtreeFocus
+      (cdkFocusChange)="handleFocusChange($event)"
+    />
+  </div>
+}

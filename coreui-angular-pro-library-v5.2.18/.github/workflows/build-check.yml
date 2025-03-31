@@ -1,0 +1,32 @@
+name: Build check
+
+on:
+  schedule:
+    # build runs every monday at 4AM UTC
+    - cron: '0 4 * * 1'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: project check
+        run: |
+          npm i
+          npm run build:icons:prod
+          npm run build:lib:prod
+          npm run lint:lib
+          npm run test:lib:prod
+        env:
+          CI: true

@@ -1,0 +1,28 @@
+<c-card-body>
+  @if (icon() || templates?.['widgetIconTemplate']) {
+    <div [ngClass]="iconClasses()">
+      <ng-container *ngTemplateOutlet="templates?.['widgetIconTemplate'] || defaultWidgetIconTemplate" />
+    </div>
+  }
+  @if (!!value()) {
+    <div [ngClass]="valueClasses()">
+      {{ value() }}
+    </div>
+  }
+  @if (!!title()) {
+    <div [ngClass]="titleClasses()">
+      {{ title() }}
+    </div>
+  }
+  @if (templates?.['widgetProgressTemplate']) {
+    <ng-container *ngTemplateOutlet="templates?.['widgetProgressTemplate'] || defaultWidgetProgressTemplate" />
+  }
+</c-card-body>
+
+<ng-template #defaultWidgetIconTemplate>
+  {{ icon() }}
+</ng-template>
+
+<ng-template #defaultWidgetProgressTemplate>
+  <ng-content />
+</ng-template>

@@ -1,0 +1,250 @@
+@if (itemsPerPageSelect || tableFilter || cleaner || templates['tableCustomHeader']) {
+  <div class="row my-2 mx-0">
+    @if (tableFilter) {
+      <div class="col-auto p-0">
+        <ng-container *ngTemplateOutlet="tableFilterTemplate" />
+      </div>
+    }
+    @if (cleaner) {
+      <div class="col-auto p-0">
+        <ng-container *ngTemplateOutlet="tableCleanerTemplate" />
+      </div>
+    }
+    <ng-container *ngTemplateOutlet="templates['tableCustomHeader'] || tableCustomHeaderTemplate" />
+
+    <ng-template #tableFilterTemplate>
+      @if (tableFilter) {
+        <c-smart-table-filter
+          (valueChange)="handleTableFilterChange($event)"
+          [delay]="300"
+          [filterLabel]="tableFilterLabel"
+          [filterPlaceholder]="tableFilterPlaceholder"
+          [onEvent]="tableFilterEvent"
+          [value]="tableFilterState"
+          cFilterInput
+        />
+      }
+    </ng-template>
+
+    <ng-template #tableCleanerTemplate>
+      @if (cleaner) {
+        <button
+          (click)="clean($event)"
+          [disabled]="!isFiltered"
+          [ngClass]="{'ms-1': tableFilter}"
+          cButton
+          color="transparent"
+          tabindex="0"
+        >
+          <ng-container *ngTemplateOutlet="filterIconTemplate" />
+        </button>
+      }
+    </ng-template>
+
+    <ng-template #tableCustomHeaderTemplate>
+      <div class="col-auto p-0 ms-auto">
+        <ng-content select="[customHeader]" />
+      </div>
+    </ng-template>
+  </div>
+}
+<div class="position-relative">
+  <table [align]="tableProps?.align"
+         [borderColor]="tableProps?.borderColor"
+         [bordered]="tableProps?.bordered ?? undefined"
+         [borderless]="tableProps?.borderless ?? undefined"
+         [cHtmlAttr]="tableProps?.attributes ?? {}"
+         [cTableColor]="tableProps?.color"
+         [caption]="tableProps?.caption"
+         [color]="tableProps?.color"
+         [hover]="tableProps?.hover ?? undefined"
+         [responsive]="tableProps?.responsive"
+         [small]="tableProps?.small ?? undefined"
+         [striped]="tableProps?.striped ?? undefined"
+         cTable
+  >
+    @if (header) {
+      <c-smart-table-head
+        (columnFilterStateChange)="handleColumnFilterChange($event)"
+        (selectAllChange)="handleSelectAllChange($event)"
+        (sorterStateChange)="handleSortChange($event)"
+        [cAlign]="tableHeadProps?.align"
+        [cHtmlAttr]="tableHeadProps?.attributes ?? {}"
+        [cTableColor]="tableHeadProps?.color"
+        [columnFilterState]="columnFilterState"
+        [columnFilterTemplates]="columnFilterTemplates"
+        [columnFilter]="columnFilter"
+        [columnGroups]="columnGroups$()"
+        [columnLabelTemplates]="columnLabelTemplates"
+        [columnSorter]="columnSorter"
+        [columns]="columns$()"
+        [selectAll]="selectAll"
+        [selectable]="selectable"
+        [selectedAll]="(selectedAllSubject | async) ?? false"
+        [showGroups]="showGroups$()"
+        [sorterValue]="sorterValue"
+      />
+    }
+
+    <ng-container *ngTemplateOutlet="tbodyDefaultTemplate" />
+
+    @if (summaryRowTemplate && !footer) {
+      <tfoot>
+      <ng-container *ngTemplateOutlet="summaryRowTemplate" />
+      </tfoot>
+    }
+    @if (footer) {
+      <c-smart-table-head
+        (selectAllChange)="handleSelectAllChange($event)"
+        (sorterStateChange)="handleSortChange($event)"
+        [cAlign]="tableFootProps?.align"
+        [cHtmlAttr]="tableFootProps?.attributes ?? {}"
+        [cTableColor]="tableFootProps?.color"
+        [columnFilterTemplates]="columnFilterTemplates"
+        [columnLabelTemplates]="columnLabelTemplates"
+        [columnSorter]="columnSorter"
+        [columns]="columns$()"
+        [selectAll]="selectAll"
+        [selectable]="selectable"
+        [selectedAll]="(selectedAllSubject | async) ?? false"
+        [sorterValue]="sorterValue"
+        [summaryRowTemplate]="summaryRowTemplate"
+        component="tfoot"
+      />
+    }
+
+  </table>
+  @if (loading) {
+    <c-element-cover
+      [boundaries]="[
+        { sides: ['top'], query: 'td' },
+        { sides: ['bottom'], query: 'tbody' }
+      ]"
+    />
+  }
+</div>
+@if (pagination || itemsPerPageSelect) {
+  <div class="row">
+    <div class="col">
+      @if (pagination && numberOfPages > 1) {
+        <c-smart-pagination
+          (activePageChange)="setActivePage($event)"
+          [activePage]="activePage"
+          [pages]="numberOfPages"
+        />
+      }
+    </div>
+    <div class="col-auto ms-auto">
+      @if (itemsPerPageSelect) {
+        <c-smart-table-items-per-page-selector
+          (itemsPerPageChange)="handleItemsPerPageChange($event)"
+          [itemsPerPageLabel]="itemsPerPageLabel"
+          [itemsPerPageOptions]="itemsPerPageOptions"
+          [itemsPerPage]="itemsPerPage"
+        />
+      }
+    </div>
+  </div>
+}
+<ng-template #tbodyDefaultTemplate>
+  <tbody [cAlign]="tableBodyProps?.align"
+         [cHtmlAttr]="tableBodyProps?.attributes ?? {}"
+         [cTableColor]="tableBodyProps?.color"
+  >
+    @for (item of currentItems; track item; let i = $index, cnt = $count, isEven = $even, isOdd = $odd) {
+      <tr (click)="handleRowClick({$event, item, i})"
+          [cAlign]="item._props?.align"
+          [cTableActive]="item._props?.active ?? undefined"
+          [cTableColor]="item._props?.color"
+          [ngStyle]="{cursor: clickableRows ? 'pointer' : 'auto'}"
+          [tabindex]="clickableRows ? 0 : -1"
+      >
+        @if (selectable) {
+          <td [cAlign]="item?.['_cellProps']?._all?.align"
+              [cTableActive]="item?.['_cellProps']?._all?.active ?? undefined"
+              [cTableColor]="item?.['_cellProps']?._all?.color"
+          >
+            <input (change)="handleRowChecked($event, item)"
+                   [checked]="item._selected ?? false"
+                   [disabled]="(item?._selectable === false) ?? false"
+                   autocomplete="off"
+                   cFormCheckInput
+            >
+          </td>
+        }
+        @for (column of columns$(); track column; let i = $index) {
+          <ng-container
+            *ngTemplateOutlet="templates['tableData'] || columnDefaultTemplate; context: {column, item, columnName: getColumnKey(column), tdContent: item[column.key], cellProps: getTableDataCellProps(column, item) }"
+          />
+        }
+      </tr>
+      @if (templates['tableDetails']) {
+        <!--      <ng-container *ngTemplateOutlet="rowDetailsDefaultTemplate"></ng-container>-->
+        <tr>
+          <td [colSpan]="colspan" [ngStyle]="{borderBottomWidth: 0}" class="p-0" tabindex="-1"></td>
+        </tr>
+        <tr class="p-0">
+          <td [colSpan]="colspan" [ngStyle]="{border: 0}" class="p-0">
+            <ng-container *ngTemplateOutlet="templates['tableDetails']; context: {item, index: i}" />
+          </td>
+        </tr>
+      }
+    }
+  <ng-container *ngTemplateOutlet="noItemsDefaultTemplate" />
+  </tbody>
+</ng-template>
+
+<ng-template
+  #columnDefaultTemplate
+  let-cellProps="cellProps"
+  let-column="column"
+  let-columnName="columnName"
+  let-item="item"
+  let-tdContent="tdContent"
+>
+  @if (tdContent !== undefined) {
+    <td [cAlign]="cellProps?.align"
+        [cHtmlAttr]="cellProps?.['_attributes'] ?? undefined"
+        [cTableActive]="cellProps?.['active']"
+        [cTableColor]="cellProps?.color ?? column[columnName]?._colProps?.color ?? undefined"
+        [ngClass]="getTableDataCellClass(column, item)"
+        [ngStyle]="getTableDataCellStyles(column, item)"
+    >
+      {{ tdContent }}
+    </td>
+  }
+</ng-template>
+
+<!--<ng-template #rowDetailsDefaultTemplate let-item let-index>-->
+<!--  <tr><td [colSpan]="colspan" class="p-0" tabindex="-1" [ngStyle]="{borderBottomWidth: 0}"></td></tr>-->
+<!--  <tr class="p-0">-->
+<!--    <td [colSpan]="colspan" class="p-0" [ngStyle]="{border: 0}">-->
+<!--      <ng-container *ngTemplateOutlet="templates?.tableDetails"></ng-container>-->
+<!--    </td>-->
+<!--  </tr>-->
+<!--</ng-template>-->
+
+<ng-template #noItemsDefaultTemplate>
+  @if (!currentItems.length) {
+    <tr>
+      <td [colSpan]="colspan" class="justify-content-center">{{ noItemsLabel }}</td>
+    </tr>
+  }
+</ng-template>
+
+<!--todo: filterIconCustomTemplate-->
+<ng-template #filterIconTemplate>
+  <svg class="icon icon-custom-size" pointer-events="none" role="img" viewBox="0 0 512 512"
+       width="18" xmlns="http://www.w3.org/2000/svg">
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="40 16 40 53.828 109.024 136 150.815 136 76.896 48 459.51 48 304 242.388 304 401.373 241.373 464 240 464 240 368 208 368 208 496 254.627 496 336 414.627 336 253.612 496 53.612 496 16 40 16">
+    </polygon>
+    <polygon
+      class="ci-primary"
+      fill="var(--ci-primary-color, currentColor)"
+      points="166.403 248.225 226.864 187.763 204.237 165.135 143.775 225.597 83.313 165.135 60.687 187.763 121.148 248.225 60.687 308.687 83.313 331.314 143.775 270.852 204.237 331.314 226.864 308.687 166.403 248.225">
+    </polygon>
+  </svg>
+</ng-template>

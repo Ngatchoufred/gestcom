@@ -1,0 +1,39 @@
+<a (click)="toggleGroup($event)"
+   [cHtmlAttr]="item.attributes"
+   class="nav-link nav-group-toggle"
+   href>
+  <ng-container *ngTemplateOutlet="iconTemplate ; context: {$implicit: item}" />
+  <ng-container>{{ item.name }}</ng-container>
+  @if (helper.hasBadge(item)) {
+    <span [ngClass]="item | cSidebarNavBadge">{{ item.badge.text }}</span>
+  }
+</a>
+<c-sidebar-nav
+  (@openClose.done)="onAnimationDone($event)"
+  (@openClose.start)="onAnimationStart($event)"
+  [@openClose]="open ? 'open' : 'closed'"
+  [compact]="compact"
+  [dropdownMode]="dropdownMode"
+  [groupItems]="true"
+  [navItems]="navItems"
+  [ngStyle]="display"
+/>
+
+<ng-template #iconTemplate let-item>
+  <!--  <i *ngIf="item?.icon" [ngClass]="item | cSidebarNavIcon"></i>-->
+  @if (item?.icon) {
+    <span class="nav-icon">
+    <span [ngClass]="item.icon ?? ''"></span>
+  </span>
+  }
+  @if (item?.iconComponent) {
+    <svg
+      [cIcon]="item.iconComponent?.content"
+      [customClasses]="item | cSidebarNavIcon"
+      [name]="item.iconComponent?.name"
+    />
+  }
+  @if (!item?.icon && !item?.iconComponent) {
+    <span [ngClass]="item | cSidebarNavIcon"></span>
+  }
+</ng-template>

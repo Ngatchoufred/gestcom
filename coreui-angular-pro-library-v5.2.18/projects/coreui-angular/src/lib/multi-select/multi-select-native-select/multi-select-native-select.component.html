@@ -1,0 +1,12 @@
+<select [disabled]="disabled" [id]="id" [multiple]="multiple" [name]="name" style="display: none" tabindex="-1">
+  @for (option of options; track option) {
+    <option
+      [attr.selected]="option.selected ? '' : null"
+      [disabled]="disabled"
+      [label]="option.label"
+      [value]="option.value"
+      tabindex="-1"
+    ></option>
+  }
+</select>
+
