@@ -19,6 +19,7 @@ public class ArticleCommandeService {
     private ArticleCommandeRepository articleCommandeRepository;
 
     public ArticleCommande creer(ArticleCommande articleCommande) {
+
         return articleCommandeRepository.save(articleCommande);
     }
     @Transactional
@@ -56,46 +57,49 @@ public class ArticleCommandeService {
         return false;
     }
     @Transactional
-    public void modifier(long id, ArticleCommande updatedArticleCommande) {
-        Optional<ArticleCommande> articleCommandeBddOpt = articleCommandeRepository.findById(id);
+    public void modifier(long cmdId, ArticleCommande updatedArticleCommande, long articleId) {
 
-        if (articleCommandeBddOpt.isPresent()) {
-            ArticleCommande articleCommandeBdd = articleCommandeBddOpt.get();
+        // Fetch the existing ArticleCommande
+        ArticleCommande articleCommandeBdd = articleCommandeRepository
+                .findByCmd_IdAndArticle_Id(cmdId, articleId)
+                .stream()
+                .findFirst()  // Ensure we get a single result
+                .orElseThrow(() -> new RuntimeException(
+                        "ArticleCommande with cmdId " + cmdId + " and articleId " + articleId + " not found"
+                ));
 
-            if (updatedArticleCommande.getArticle_id() != null &&
-                    !updatedArticleCommande.getArticle_id().equals(articleCommandeBdd.getArticle_id())) {
-                articleCommandeBdd.setArticle_id(updatedArticleCommande.getArticle_id());
-            }
+        // Update only if values have changed
+        /*if (!updatedArticleCommande.getArticle_id().equals(articleCommandeBdd.getArticle_id())) {
+            articleCommandeBdd.setArticle_id(updatedArticleCommande.getArticle_id());
+        }*/
 
-            if (updatedArticleCommande.getQte_cmd() != articleCommandeBdd.getQte_cmd()) {
-                articleCommandeBdd.setQte_cmd(updatedArticleCommande.getQte_cmd());
-            }
-
-            if (updatedArticleCommande.getQte_livre() != articleCommandeBdd.getQte_livre()) {
-                articleCommandeBdd.setQte_livre(updatedArticleCommande.getQte_livre());
-            }
-
-            if (updatedArticleCommande.getPrix_U() != articleCommandeBdd.getPrix_U()) {
-                articleCommandeBdd.setPrix_U(updatedArticleCommande.getPrix_U());
-            }
-
-            if (updatedArticleCommande.getReference() != articleCommandeBdd.getReference()) {
-                articleCommandeBdd.setReference(updatedArticleCommande.getReference());
-            }
-
-            if (updatedArticleCommande.getReferences_recues() != articleCommandeBdd.getReferences_recues()) {
-                articleCommandeBdd.setReferences_recues(updatedArticleCommande.getReferences_recues());
-            }
-
-            if (updatedArticleCommande.getCmd_id() != null &&
-                    !updatedArticleCommande.getCmd_id().equals(articleCommandeBdd.getCmd_id())) {
-                articleCommandeBdd.setCmd_id(updatedArticleCommande.getCmd_id());
-            }
-
-            articleCommandeRepository.save(articleCommandeBdd);
-        } else {
-            throw new RuntimeException("ArticleCommande with ID " + id + " not found");
+        if (updatedArticleCommande.getQte_cmd() != articleCommandeBdd.getQte_cmd()) {
+            articleCommandeBdd.setQte_cmd(updatedArticleCommande.getQte_cmd());
         }
+
+        if (updatedArticleCommande.getQte_livre() != articleCommandeBdd.getQte_livre()) {
+            articleCommandeBdd.setQte_livre(updatedArticleCommande.getQte_livre());
+        }
+
+        if (updatedArticleCommande.getPrix_U() != articleCommandeBdd.getPrix_U()) {
+            articleCommandeBdd.setPrix_U(updatedArticleCommande.getPrix_U());
+        }
+
+        if (updatedArticleCommande.getReference() != articleCommandeBdd.getReference()) {
+            articleCommandeBdd.setReference(updatedArticleCommande.getReference());
+        }
+
+        if (updatedArticleCommande.getReferences_recues() != articleCommandeBdd.getReferences_recues()) {
+            articleCommandeBdd.setReferences_recues(updatedArticleCommande.getReferences_recues());
+        }
+
+        /*if (!updatedArticleCommande.getCmd_id().equals(articleCommandeBdd.getCmd_id())) {
+            articleCommandeBdd.setCmd_id(updatedArticleCommande.getCmd_id());
+        }*/
+
+        // Save only if changes were made
+        articleCommandeRepository.save(articleCommandeBdd);
     }
+
 }
 

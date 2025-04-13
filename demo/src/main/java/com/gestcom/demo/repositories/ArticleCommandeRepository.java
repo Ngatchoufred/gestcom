@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleCommandeRepository extends JpaRepository<ArticleCommande,Long> {
-    List<ArticleCommande> findByCmd_Id (Long CmdId);
+    List<ArticleCommande> findByCmd_IdAndArticle_Id (Long CmdId, Long ArticleId);
+    List<ArticleCommande> findByCmd_Id(Long CmdId);
+
 
 }

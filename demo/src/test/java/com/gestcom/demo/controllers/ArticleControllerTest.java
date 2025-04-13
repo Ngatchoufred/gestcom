@@ -50,7 +50,7 @@ class ArticleControllerTest {
 
     @Test
     public void testcreerArticle() throws Exception {
-        Long articleId = 1L;
+        // Préparation de la requête
         ArticleFournisseurRequest request = new ArticleFournisseurRequest();
         request.setNomArticle("Updated Article");
         request.setDescription("Nouvelle description");
@@ -59,23 +59,31 @@ class ArticleControllerTest {
         request.setPrixUnit(150.0);
         request.setEtatArticle(Etat.VALIDE);
         request.setQuantite(20);
-        // Catégorie (sans changement)
+
+        // Catégorie
         CatArticle categorie = new CatArticle();
-        categorie.setId(2L);
+        categorie.setId(2L); // idCategorie
         request.setCategorie(categorie);
-        // 🔹 Si ton service attend une liste d’IDs au lieu d'un objet `Fournisseur`
-        List<Long> fournisseursIds = Arrays.asList(3L, 5L); // Ex: Plusieurs fournisseurs
-        request.setFournisseur(fournisseursIds); // Assure-toi que `setFournisseurs` existe !
-        // Conversion en JSON
+
+        // Fournisseurs
+        List<Long> fournisseursIds = Arrays.asList(3L, 5L);
+        request.setFournisseur(fournisseursIds); // Assure-toi que c’est bien une liste dans ta classe
+
+        // Conversion JSON
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(request);
-        mockMvc.perform(post("/articles/")
+
+        // Envoi de la requête POST
+        mockMvc.perform(post("/art/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
+
+        // Vérification de l’appel au service
         verify(articleService, times(1))
-                .creerArticleAvecFournisseur(eq(articleId),any(Article.class), any(ArticleFournisseurRequest.class).getFournisseur());
+                .creerArticleAvecFournisseur(eq(2L), any(Article.class), eq(fournisseursIds));
     }
+
 
 
     @Test
@@ -107,6 +115,7 @@ class ArticleControllerTest {
 
     @Test
     void testUpdateArticle() throws Exception {
+        // Préparation de la requête
         ArticleFournisseurRequest request = new ArticleFournisseurRequest();
         request.setNomArticle("Updated Article");
         request.setDescription("Updated Description");
@@ -115,19 +124,34 @@ class ArticleControllerTest {
         request.setPrixUnit(200.0);
         request.setEtatArticle(Etat.VALIDE);
         request.setQuantite(5);
-        //Catégorie et fournisseur
-        CatArticle categorie = new CatArticle();
-        categorie.setId(1L);
-        request.setCategorie(categorie);
-        //request.setFournisseur(1);
 
+        // Catégorie
+        CatArticle categorie = new CatArticle();
+        categorie.setId(1L);  // Assure-toi que c'est bien l'ID de la catégorie
+        request.setCategorie(categorie);
+
+        // Fournisseurs : Change this to a List<Long> like in the other test
+        List<Long> fournisseursIds = Arrays.asList(1L, 2L);  // List of supplier IDs
+        request.setFournisseur(fournisseursIds);  // Assure-toi que c'est bien une liste dans ta classe
+
+        // Conversion JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        // Envoi de la requête PUT
         mockMvc.perform(put("/art/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(jsonRequest))
                 .andExpect(status().isNoContent());
 
-        verify(articleService, times(1)).modifier(eq(1), anyLong(), any(Article.class), any(Fournisseur.class));
+        // Vérification de l'appel au service avec List<Long> pour fournisseursIds
+        verify(articleService, times(1))
+                .modifier(eq(1), anyLong(), any(Article.class), eq(fournisseursIds));
     }
+
+
+
+
 
     @Test
     void testDeleteArticle() throws Exception {

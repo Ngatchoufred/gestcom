@@ -1,14 +1,13 @@
 package com.gestcom.demo.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") // 🔹 Indique que l'id doit être utilisé comme référence
 public class ArticleCommande {
 
     @Id
@@ -17,7 +16,7 @@ public class ArticleCommande {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "article_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)  // ✅ Ensures only the ID is serialized
+    //@JsonIdentityReference(alwaysAsId = true)  // ✅ Ensures only the ID is serialized
     private Article article;
 
     @Column(nullable = false)
@@ -25,10 +24,11 @@ public class ArticleCommande {
 
     @Column(nullable = false)
     private long qte_livre;
+   // @JsonIgnoreProperties({"nomArticle", "quantite", "description", "datePeremption", "reference", "prixUnit", "etatArticle", "fournisseurs"})
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "cmd_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)  // ✅ Ensures only the ID is serialized
+    //@JsonIdentityReference(alwaysAsId = true)  // ✅ Ensures only the ID is serialized
     private Commande cmd;
 
     @Column(nullable = false)

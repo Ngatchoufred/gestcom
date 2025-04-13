@@ -7,9 +7,7 @@ import com.gestcom.demo.Dto.TicketCommandeRequest;
 import com.gestcom.demo.entities.Commande;
 import com.gestcom.demo.entities.Ticket;
 import com.gestcom.demo.enums.Etat;
-import com.gestcom.demo.services.CommandeService;
-import com.gestcom.demo.services.JwtService;
-import com.gestcom.demo.services.TicketService;
+import com.gestcom.demo.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class CommandeControllerTest {
+    @Mock
+    private ArticleService articleService;
 
     @Mock
     private CommandeService commandeService;
@@ -42,9 +42,12 @@ class CommandeControllerTest {
 
     @Mock
     private JwtService jwtService;
+    @Mock
+    private ArticleCommandeService articleCommandeService;
 
     @InjectMocks
     private CommandeController commandeController;
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -111,6 +114,7 @@ class CommandeControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Commande ID: 1 et Ticket ID: 1 créés avec succès."));
     }
+
 
     @Test
     void testRechercherCommandes() throws Exception {

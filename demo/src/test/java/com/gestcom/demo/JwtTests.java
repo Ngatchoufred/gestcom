@@ -16,7 +16,7 @@ public class JwtTests {
     void setUp() {
         jwtService = new JwtService();
         // Injecter les valeurs des propriétés `secretKey` et `jwtExpirationInMs`
-        ReflectionTestUtils.setField(jwtService, "secretKey", "mySuperSecretKey12345");
+        ReflectionTestUtils.setField(jwtService, "secretKey", "JjZn8Xn3L9JfYv3tPbX7JbFz7qM8RrWn4pVz2QyT6fYxHkNpLtZn8Xn3L9JfYv3tPbX7JbFz7qM8RrWn4pVz2QyT6fYxHkNpLt");
         ReflectionTestUtils.setField(jwtService, "jwtExpirationInMs", 3600000L);  // 1 heure
     }
 
@@ -52,19 +52,23 @@ public class JwtTests {
 
     @Test
     void testIsTokenExpired() {
-        // Créer un token avec une date d'expiration courte
-        ReflectionTestUtils.setField(jwtService, "jwtExpirationInMs", 1L);  // 1 milliseconde
+        // Fixer une expiration courte pour simuler un token expiré
+        ReflectionTestUtils.setField(jwtService, "jwtExpirationInMs", 10); // 10 ms
+
         String token = jwtService.generateToken("testUser");
 
+        // Attendre suffisamment pour que le token expire
         try {
-            Thread.sleep(10);  // Attendre un peu pour que le token expire
+            Thread.sleep(50); // 50 ms pour s'assurer que le token est expiré
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt(); // Bonne pratique
         }
 
-        boolean isExpired = jwtService.validateToken(token, "testUser");
-        assertFalse(isExpired, "The token should be expired");
+        boolean isValid = jwtService.validateToken(token, "testUser");
+
+        assertFalse(isValid, "Le token devrait être expiré");
     }
+
 
     @Test
     void testExtractExpiration() {
