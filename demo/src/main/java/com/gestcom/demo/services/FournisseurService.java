@@ -67,7 +67,7 @@ public class FournisseurService {
     }
 
     @Transactional
-    public void updateEtatFourById(Long id) {
+    public void updateEtatFourById(int id) {
         //this.catArticleRepository.updateEtatCatById(id, Etat.NON_VALIDE);
         Fournisseur fournisseurBdd = this.lire(id);
         if(fournisseurBdd != null){
