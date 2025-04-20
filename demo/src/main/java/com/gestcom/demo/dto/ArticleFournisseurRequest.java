@@ -1,4 +1,4 @@
-package com.gestcom.demo.Dto;
+package com.gestcom.demo.dto;
 
 import com.gestcom.demo.entities.Article;
 import com.gestcom.demo.entities.Fournisseur;

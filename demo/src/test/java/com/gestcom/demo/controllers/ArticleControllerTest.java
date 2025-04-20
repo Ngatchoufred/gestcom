@@ -3,11 +3,9 @@ package com.gestcom.demo.controllers;
 import com.gestcom.demo.entities.Article;
 import com.gestcom.demo.entities.ArticleFournisseurRequest;
 import com.gestcom.demo.entities.CatArticle;
-import com.gestcom.demo.entities.Fournisseur;
 import com.gestcom.demo.enums.Etat;
 import com.gestcom.demo.services.ArticleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.startup.Catalina;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -39,7 +37,7 @@ class ArticleControllerTest {
     @InjectMocks
     private ArticleController articleController;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+   private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -49,7 +47,7 @@ class ArticleControllerTest {
 
 
     @Test
-    public void testcreerArticle() throws Exception {
+    void testcreerArticle() throws Exception {
         // Préparation de la requête
         ArticleFournisseurRequest request = new ArticleFournisseurRequest();
         request.setNomArticle("Updated Article");
@@ -70,7 +68,7 @@ class ArticleControllerTest {
         request.setFournisseur(fournisseursIds); // Assure-toi que c’est bien une liste dans ta classe
 
         // Conversion JSON
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         // Envoi de la requête POST
@@ -135,7 +133,7 @@ class ArticleControllerTest {
         request.setFournisseur(fournisseursIds);  // Assure-toi que c'est bien une liste dans ta classe
 
         // Conversion JSON
-        ObjectMapper objectMapper = new ObjectMapper();
+
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         // Envoi de la requête PUT

@@ -1,9 +1,5 @@
-package com.gestcom.demo.Dto;
+package com.gestcom.demo.dto;
 
-import com.gestcom.demo.entities.Article;
-import com.gestcom.demo.entities.Commande;
-
-import java.util.Collection;
 
 public class ArticleCommandeRequest {
     private Long article_id;

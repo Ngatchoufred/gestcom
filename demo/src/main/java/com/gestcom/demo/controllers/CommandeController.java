@@ -1,7 +1,7 @@
 package com.gestcom.demo.controllers;
 
-import com.gestcom.demo.Dto.ArticleCommandeRequest;
-import com.gestcom.demo.Dto.TicketCommandeRequest;
+import com.gestcom.demo.dto.ArticleCommandeRequest;
+import com.gestcom.demo.dto.TicketCommandeRequest;
 import com.gestcom.demo.entities.Article;
 import com.gestcom.demo.entities.ArticleCommande;
 import com.gestcom.demo.entities.Commande;

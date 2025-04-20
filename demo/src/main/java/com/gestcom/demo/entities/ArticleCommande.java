@@ -3,8 +3,6 @@ package com.gestcom.demo.entities;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
-import static jakarta.persistence.CascadeType.MERGE;
-import static jakarta.persistence.CascadeType.PERSIST;
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") // 🔹 Indique que l'id doit être utilisé comme référence

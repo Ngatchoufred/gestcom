@@ -1,10 +1,6 @@
-package com.gestcom.demo.Dto;
+package com.gestcom.demo.dto;
 
-import com.gestcom.demo.entities.Article;
-import com.gestcom.demo.entities.Commande;
 import com.gestcom.demo.entities.Ticket;
-
-import java.util.List;
 
 public class TicketCommandeRequest {
     private Ticket ticket;

@@ -1,4 +1,4 @@
-package com.gestcom.demo.Dto;
+package com.gestcom.demo.dto;
 
 import com.gestcom.demo.enums.Etat;
 import com.gestcom.demo.enums.EtatObjetTicket;

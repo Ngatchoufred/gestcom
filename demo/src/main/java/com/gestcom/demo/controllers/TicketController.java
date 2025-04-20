@@ -1,20 +1,11 @@
 package com.gestcom.demo.controllers;
 
-import com.gestcom.demo.Dto.TicketCommandeRequest;
-import com.gestcom.demo.entities.CatArticle;
-import com.gestcom.demo.entities.Commande;
 import com.gestcom.demo.entities.Ticket;
-import com.gestcom.demo.enums.Etat;
-import com.gestcom.demo.enums.EtatObjetTicket;
-import com.gestcom.demo.services.CartArticleService;
 import com.gestcom.demo.services.CommandeService;
 import com.gestcom.demo.services.TicketService;
 import com.gestcom.demo.services.UserService;
-import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
